@@ -2,40 +2,120 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mario Kart DS - Servidor Privado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Emulador Clínico de DS ⚡</title>
     <style>
-        body { background-color: #111; color: white; text-align: center; font-family: sans-serif; padding-top: 50px; }
-        #game-container { width: 640px; height: 480px; margin: 20px auto; border: 2px solid #333; background: #000; }
-        #file-input { margin: 20px; padding: 12px 20px; background: #222; color: white; border: 2px dashed #555; cursor: pointer; border-radius: 5px; font-size: 16px; }
-        #file-input:hover { background: #333; border-color: #888; }
+        /* Estilos oscuros tipo gamer / hacker */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            font-size: 24px;
+            color: #00ffcc;
+        }
+
+        p {
+            color: #aaaaaa;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* Contenedor del emulador */
+        #emulator-container {
+            width: 800px;
+            height: 600px;
+            max-width: 95vw;
+            max-height: 80vh;
+            background: #1e1e1e;
+            border: 2px dashed #00ffcc;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Botón de carga guapo */
+        .upload-btn {
+            background-color: #00ffcc;
+            color: #121212;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+        }
+
+        .upload-btn:hover {
+            background-color: #00ccaa;
+            transform: scale(1.05);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        #game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Mario Kart DS Web Player</h1>
-    <p>Selecciona el archivo .nds (puedes elegirlo desde tu PC o desde tu Google Drive):</p>
+    <h1>Nintendo DS Web Player 🕹️</h1>
+    <p>Arrastra o selecciona cualquier archivo <strong>.nds</strong> para jugar al toque</p>
     
-    <input type="file" id="file-input" accept=".nds">
-
-    <div id="game-container">
-        <div id="game"></div>
+    <div id="emulator-container" id="drop-zone">
+        <label class="upload-btn">
+            Seleccionar ROM (.nds)
+            <input type="file" id="rom-selector" accept=".nds">
+        </label>
     </div>
 
     <script>
-        EJS_player = '#game';
-        EJS_core = 'nds'; 
-        EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/'; 
+        const romSelector = document.getElementById('rom-selector');
+        const container = document.getElementById('emulator-container');
 
-        document.getElementById('file-input').onchange = function(e) {
-            let file = e.target.files[0];
-            if (file) {
-                EJS_gameUrl = URL.createObjectURL(file);
-                
-                let loader = document.createElement('script');
-                loader.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-                document.body.appendChild(loader);
-            }
-        };
+        romSelector.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Alquimia pura: Convertimos tu archivo local en una URL temporal
+            const tRomUrl = URL.createObjectURL(file);
+
+            // Quitamos el botón y metemos el div que necesita el emulador
+            container.style.border = "none";
+            container.innerHTML = '<div id="game" style="width:100%; height:100%;"></div>';
+
+            // Configuración global de EmulatorJS
+            window.EmuJSWidth = "800";
+            window.EmuJSHeight = "600";
+            window.EmuJSFolder = "https://emulatorjs.org/emujs"; // Servidor con los motores WASM
+            window.EmuPlatform = "nds";
+            window.EmuRomUrl = tRomUrl;
+            window.EmuJSStartOnLoaded = true;
+
+            // Inyectamos el script principal que arranca la magia
+            const script = document.createElement('script');
+            script.src = "https://emulatorjs.org/emujs/emu-main.js";
+            document.body.appendChild(script);
+        });
     </script>
 
 </body>
