@@ -157,6 +157,7 @@
             display: none;
             border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
     </style>
 </head>
@@ -165,28 +166,23 @@
     <h1 id="titulo-principal">Emulador web de Sr. Croquetas 🕹️</h1>
     <p id="subtitulo">Selecciona la plataforma a emular</p>
     
-    <!-- MENÚ DE CONSOLAS CON RUTAS LOCALES (A prueba de institutos) -->
     <div id="main-menu">
-        <!-- Tarjeta PS1 -->
         <div class="console-card card-psx" onclick="abrirCarga('psx', '.bin,.img,.chd,.iso', 'PlayStation 1')">
             <img src="ps1.png" alt="PlayStation">
             <h3>PlayStation 1</h3>
         </div>
 
-        <!-- Tarjeta NDS -->
         <div class="console-card card-nds" onclick="abrirCarga('nds', '.nds', 'Nintendo DS')">
             <img src="nds.png" alt="DS">
             <h3>Nintendo DS</h3>
         </div>
 
-        <!-- Tarjeta N64 -->
         <div class="console-card card-n64" onclick="abrirCarga('n64', '.n64,.z64,.v64', 'Nintendo 64')">
             <img src="n64.png" alt="N64">
             <h3>Nintendo 64</h3>
         </div>
     </div>
 
-    <!-- ZONA DE SUBIR EL ARCHIVO -->
     <div id="upload-screen">
         <button class="btn-volver" onclick="volverMenu()">← Volver</button>
         <h2 id="titulo-carga" style="color: var(--color-acento); margin-top: 0; transition: color 0.3s;">Sube tu juego</h2>
@@ -198,7 +194,6 @@
         </label>
     </div>
 
-    <!-- PANTALLA DEL EMULADOR -->
     <div id="emulator-container"></div>
 
     <script>
@@ -255,20 +250,27 @@
 
             uploadScreen.style.display = 'none';
             document.getElementById('titulo-principal').style.display = 'none';
+            
+            // Activamos el cuadro del emulador
             emuContainer.style.display = 'block';
-
-            const tRomUrl = URL.createObjectURL(file);
             emuContainer.innerHTML = '<div id="game" style="width:100%; height:100%;"></div>';
 
-            window.EmuJSWidth = "800";
-            window.EmuJSHeight = "600";
-            window.EmuJSFolder = "https://emulatorjs.org/emujs"; 
-            window.EmuPlatform = consolaActiva;
-            window.EmuRomUrl = tRomUrl;
-            window.EmuJSStartOnLoaded = true;
+            const tRomUrl = URL.createObjectURL(file);
 
+            // NUEVA CONFIGURACIÓN CON EL MOTOR REPARADO (Variables EJS)
+            window.EJS_player = '#game';
+            window.EJS_pathtodata = 'https://cdn.emulatorjs.org/latest/data/';
+            window.EJS_gameUrl = tRomUrl;
+            window.EJS_startOnLoaded = true;
+
+            // Asignación de núcleos correctos de la nueva librería
+            if (consolaActiva === 'psx') window.EJS_core = 'psx';
+            else if (consolaActiva === 'n64') window.EJS_core = 'n64';
+            else if (consolaActiva === 'nds') window.EJS_core = 'nds';
+
+            // Inyección del script del cargador oficial actualizado
             const script = document.createElement('script');
-            script.src = "https://emulatorjs.org/emujs/emu-main.js";
+            script.src = "https://cdn.emulatorjs.org/latest/data/loader.js";
             document.body.appendChild(script);
         });
     </script>
