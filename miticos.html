@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juegos Míticos - Sr. Croquetas ⚡</title>
+    <style>
+        body {
+            background: linear-gradient(3deg, #0f0f1a 0%, #000000 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 { color: #00ff66; margin-bottom: 5px; font-size: 28px; text-shadow: 0 0 10px rgba(0,255,102,0.3); font-weight: 800; }
+        p { color: #ffffff; margin-bottom: 30px; font-size: 16px; opacity: 0.8; }
+
+        /* ---------------- BOTÓN VOLVER ATRÁS ---------------- */
+        #btn-volver-consolas {
+            position: absolute; top: 20px; left: 20px; text-decoration: none; 
+            background: #ffffff; border: 2px solid #ffffff; color: #121212; 
+            padding: 8px 15px; border-radius: 8px; font-weight: bold; 
+            box-shadow: 0 0 15px rgba(255,255,255,0.2); transition: transform 0.2s; z-index: 10;
+        }
+        #btn-volver-consolas:hover { transform: scale(1.05); }
+
+        /* Botón de cerrar el juego activo */
+        #btn-cerrar-juego {
+            display: none; position: absolute; top: 20px; left: 20px; 
+            background: #ff3333; border: none; color: white; padding: 10px 20px; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; 
+            box-shadow: 0 0 15px rgba(255,51,51,0.5); z-index: 100;
+        }
+        #btn-cerrar-juego:hover { transform: scale(1.05); }
+
+        /* ---------------- REJILLA DE JUEGOS DIRECTOS ---------------- */
+        #games-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .game-card {
+            background: #16161c;
+            border: 2px solid #333344;
+            border-radius: 15px;
+            width: 200px;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .game-card:hover { transform: translateY(-10px); }
+        .card-doom:hover { border-color: #00ff33; box-shadow: 0 15px 25px rgba(0, 255, 51, 0.4); }
+        .card-mario64:hover { border-color: #e60012; box-shadow: 0 15px 25px rgba(230, 0, 18, 0.4); }
+        .card-minecraft:hover { border-color: #578a34; box-shadow: 0 15px 25px rgba(87, 138, 52, 0.4); }
+
+        .game-card img { width: 140px; height: 100px; object-fit: contain; margin-bottom: 15px; }
+        .game-card h3 { margin: 0; color: #ffffff; font-size: 18px; }
+
+        /* ---------------- CONTENEDOR PANORÁMICO NATÍVO ---------------- */
+        #game-container {
+            width: 854px; 
+            height: 480px; 
+            max-width: 95vw; 
+            max-height: 80vh;
+            display: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" id="btn-volver-consolas">← Ver Consolas</a>
+    <button id="btn-cerrar-juego" onclick="cerrarJuego()">❌ Cerrar Juego</button>
+
+    <h1 id="tit">Juegos Míticos Nativos 🕹️</h1>
+    <p id="sub">Ejecución directa en el navegador, sin descargas ni emuladores.</p>
+
+    <div id="games-menu">
+        <div class="game-card card-doom" onclick="cargarWeb('https://wadcmd.com/')">
+            <img src="doom_logo.png" alt="DOOM">
+            <h3>DOOM</h3>
+        </div>
+        <div class="game-card card-mario64" onclick="cargarWeb('https://super-mario-64.bitbucket.io/')">
+            <img src="mario_logo.png" alt="Super Mario 64">
+            <h3>Super Mario 64</h3>
+        </div>
+        <div class="game-card card-minecraft" onclick="cargarWeb('https://classic.minecraft.net/')">
+            <img src="minecraft_logo.png" alt="Minecraft Classic">
+            <h3>Minecraft Classic</h3>
+        </div>
+    </div>
+
+    <div id="game-container"></div>
+
+    <script>
+        const gamesMenu = document.getElementById('games-menu');
+        const gameContainer = document.getElementById('game-container');
+        const btnVolver = document.getElementById('btn-volver-consolas');
+        const btnCerrar = document.getElementById('btn-cerrar-juego');
+        const titulo = document.getElementById('tit');
+        const sub = document.getElementById('sub');
+
+        function cargarWeb(url) {
+            gamesMenu.style.display = 'none';
+            btnVolver.style.display = 'none';
+            titulo.style.display = 'none';
+            sub.style.display = 'none';
+
+            gameContainer.style.display = 'block';
+            // Cargamos la web nativa directamente en un iframe limpio dentro de los 16:9
+            gameContainer.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none;" allow="autoplay; gamepad; keyboard"></iframe>`;
+            
+            btnCerrar.style.display = 'block';
+        }
+
+        function cerrarJuego() {
+            gameContainer.style.display = 'none';
+            gameContainer.innerHTML = '';
+            btnCerrar.style.display = 'none';
+
+            titulo.style.display = 'block';
+            sub.style.display = 'block';
+            gamesMenu.style.display = 'flex';
+            btnVolver.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
